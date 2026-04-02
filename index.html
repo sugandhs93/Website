@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IT Specialist | Epsilon Industries</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07090f;
+      --surface: #0d1117;
+      --surface2: #131920;
+      --accent: #00c9ff;
+      --accent2: #7f5af0;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --border: rgba(255,255,255,0.07);
+      --glow: 0 0 40px rgba(0, 201, 255, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid rgba(0,201,255,0.5);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.35s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 4rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(7,9,15,0.7);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 4rem 4rem;
+      gap: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -20%; right: -10%;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(0,201,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.2s ease forwards;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.35s ease forwards;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.5s ease forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.65s ease forwards;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,201,255,0.3); }
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: transparent;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* Photo card */
+    .hero-visual {
+      display: flex; justify-content: center; align-items: center;
+      opacity: 0;
+      animation: fadeIn 0.9s 0.4s ease forwards;
+    }
+    .photo-frame {
+      position: relative;
+      width: 340px; height: 400px;
+    }
+    .photo-frame::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), transparent);
+      border-radius: 16px;
+      z-index: 0;
+    }
+    .photo-frame img {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+    }
+    .photo-badge {
+      position: absolute;
+      bottom: -18px; left: -18px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1.2rem;
+      z-index: 2;
+      display: flex; align-items: center; gap: 0.7rem;
+      box-shadow: var(--glow);
+    }
+    .badge-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; flex-shrink: 0; animation: pulse 2s infinite; }
+    .badge-text { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text); }
+    .badge-text span { display: block; color: var(--muted); font-size: 0.65rem; margin-top: 1px; }
+
+    /* SKILLS SECTION */
+    .section {
+      padding: 6rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 3.5rem;
+    }
+    .section-title span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.8rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+    .skill-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .skill-card:hover { border-color: rgba(0,201,255,0.2); transform: translateY(-4px); box-shadow: var(--glow); }
+    .skill-card:hover::before { transform: scaleX(1); }
+    .skill-icon {
+      font-size: 2rem; margin-bottom: 1rem;
+      display: block;
+    }
+    .skill-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .skill-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .skill-level {
+      margin-top: 1.2rem;
+      height: 3px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: width 1.2s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    /* EXPERIENCE */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 160px 1px 1fr;
+      gap: 0 2rem;
+      padding-bottom: 3rem;
+      position: relative;
+    }
+    .timeline-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      padding-top: 0.3rem;
+      text-align: right;
+    }
+    .timeline-line {
+      position: relative;
+      background: var(--border);
+    }
+    .timeline-line::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 50%;
+      transform: translateX(-50%);
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .timeline-content { padding-top: 0; }
+    .timeline-role {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.3rem;
+    }
+    .timeline-company {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+    .timeline-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--accent);
+      background: rgba(0,201,255,0.07);
+      border: 1px solid rgba(0,201,255,0.2);
+      border-radius: 4px;
+      padding: 0.25rem 0.65rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* CONTACT */
+    .contact-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-wrapper::before {
+      content: '';
+      position: absolute; bottom: -100px; right: -100px;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(127,90,240,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .contact-info h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    .contact-info p {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.75;
+      margin-bottom: 2rem;
+    }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.8rem;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      transition: color 0.2s;
+    }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link-icon {
+      width: 36px; height: 36px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* Certifications */
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .cert-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: all 0.25s;
+    }
+    .cert-card:hover { border-color: rgba(0,201,255,0.25); transform: translateY(-2px); }
+    .cert-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .cert-name { font-size: 0.82rem; font-weight: 600; line-height: 1.4; }
+    .cert-issuer { font-size: 0.7rem; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0 4rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    footer span { color: var(--accent); }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50%       { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      .hero { grid-template-columns: 1fr; padding: 7rem 2rem 4rem; text-align: center; }
+      .hero-sub { margin: 0 auto 2.5rem; }
+      .hero-actions { justify-content: center; }
+      .hero-visual { order: -1; }
+      .photo-frame { width: 260px; height: 300px; }
+      .section { padding: 4rem 2rem; }
+      .divider { margin: 0 2rem; }
+      .contact-wrapper { grid-template-columns: 1fr; padding: 2.5rem; gap: 2.5rem; }
+      .timeline-item { grid-template-columns: 100px 1px 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">// IT Specialist</div>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#certifications">Certifications</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-tag">// Epsilon Industries &nbsp;&bull;&nbsp; Toronto, CA</p>
+      <h1>IT <span>Systems</span><br/>Specialist</h1>
+      <p class="hero-sub">
+        Keeping enterprise infrastructure running at peak performance — from cloud administration and endpoint management to M365, Intune, and hands-on hardware troubleshooting.
+      </p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Get In Touch</a>
+        <a href="#skills" class="btn btn-outline">View Skills</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="photo-frame">
+        <img src="1709899903021.jpeg" alt="IT Specialist Portrait"/>
+        <div class="photo-badge">
+          <div class="badge-dot"></div>
+          <div class="badge-text">
+            Available for Opportunities
+            <span>Epsilon Industries</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- SKILLS -->
+  <section class="section" id="skills">
+    <div class="reveal">
+      <p class="section-label">// Core Competencies</p>
+      <h2 class="section-title">What I <span>Specialize</span> In</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <span class="skill-icon">☁️</span>
+        <div class="skill-name">Cloud Administration</div>
+        <div class="skill-desc">Provisioning and managing Azure resources, virtual machines, subscriptions, and cloud infrastructure with best-practice governance.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">🖥️</span>
+        <div class="skill-name">Endpoint Administration</div>
+        <div class="skill-desc">Managing Windows and macOS endpoints at scale — policies, security baselines, patching, and compliance enforcement.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:88%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">📱</span>
+        <div class="skill-name">Microsoft Intune</div>
+        <div class="skill-desc">Mobile device management and application deployment across corporate and BYOD fleets using Intune and Configuration Manager.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:85%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">🔐</span>
+        <div class="skill-name">Entra ID (Azure AD)</div>
+        <div class="skill-desc">Identity and access management — Conditional Access, MFA, SSO, group policies, and user lifecycle management.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:87%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">🎫</span>
+        <div class="skill-name">Level 1 & 2 Support</div>
+        <div class="skill-desc">Incident resolution, escalation management, and root cause analysis — delivering fast, clear solutions under SLA pressure.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:95%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">📧</span>
+        <div class="skill-name">M365 Administration</div>
+        <div class="skill-desc">Administering Exchange Online, Teams, SharePoint, OneDrive, and the full Microsoft 365 suite at the tenant level.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:92%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">🔧</span>
+        <div class="skill-name">Hardware Troubleshooting</div>
+        <div class="skill-desc">Diagnosing and resolving physical hardware failures — laptops, desktops, peripherals, networking equipment, and printers.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">🛡️</span>
+        <div class="skill-name">Security & Compliance</div>
+        <div class="skill-desc">Applying security policies, monitoring alerts, managing DLP, and ensuring regulatory compliance across the Microsoft security stack.</div>
+        <div class="skill-level"><div class="skill-fill" style="width:82%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- EXPERIENCE -->
+  <section class="section" id="experience">
+    <div class="reveal">
+      <p class="section-label">// Work History</p>
+      <h2 class="section-title">My <span>Experience</span></h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2026 March— Present</div>
+        <div class="timeline-line"></div>
+        <div class="timeline-content">
+          <div class="timeline-role">IT Specialist</div>
+          <div class="timeline-company">Epsilon Industries</div>
+          <div class="timeline-desc">
+            Managing end-to-end IT operations for a multi-site enterprise environment. Responsible for  infrastructure maintenence, endpoint security, identity governance, and frontline technical support. Reduced ticket resolution time by 30% through improved runbooks and automation.
+          </div>
+          <div class="tag-row">
+            <span class="tag">Azure</span>
+            <span class="tag">Intune</span>
+            <span class="tag">Entra ID</span>
+            <span class="tag">M365</span>
+            <span class="tag">Helpdesk</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2025 November - 2026 March</div>
+        <div class="timeline-line"></div>
+        <div class="timeline-content">
+          <div class="timeline-role">Desktop Support Analyst</div>
+          <div class="timeline-company">Kore Solutions, Ontario,Canada</div>
+          <div class="timeline-desc">
+            Provided Level 1 and Level 2 technical support for 300+ users. Handled hardware repairs,Active Directory management,M365 Adminstration, Endpoint administration and network troubleshooting across Windows and Mac environments.
+          </div>
+          <div class="tag-row">
+            <span class="tag">Active Directory</span>
+            <span class="tag">Windows</span>
+            <span class="tag">Networking</span>
+            <span class="tag">Hardware</span>
+          </div>
+        </div>
+      </div>
+     <div class="timeline-item reveal">
+        <div class="timeline-date">2024 — 2025</div>
+        <div class="timeline-line"></div>
+        <div class="timeline-content">
+          <div class="timeline-role">Technical Support Advisor 2</div>
+          <div class="timeline-company">Concentrix, Ontario,Canada</div>
+          <div class="timeline-desc">
+            Provided Level 1 and Level 2 technical support to end users, user management, logging and documentation
+          </div>
+          <div class="tag-row">
+            <span class="tag">Salesforce</span>
+            <span class="tag">User management</span>
+            <span class="tag">KBA</span>
+            <span class="tag">Hardware</span>
+      </div>
+        </div>
+      </div>
+     <div class="timeline-item reveal">
+        <div class="timeline-date">2019 — 2021</div>
+        <div class="timeline-line"></div>
+        <div class="timeline-content">
+          <div class="timeline-role">Network Engineer and Technical Support</div>
+          <div class="timeline-company">Highline Builders,Kerala,India</div>
+          <div class="timeline-desc">
+            Provided support to engineers and users working remotely.Hosted and maintained multiple servers with softwares used by Engineers and Designers.
+          </div>
+          <div class="tag-row">
+            <span class="tag">TCP/IP</span>
+            <span class="tag">DNS</span>
+            <span class="tag">SQL</span>
+            <span class="tag">Hardware</span>
+
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- CERTIFICATIONS -->
+  <section class="section" id="certifications">
+    <div class="reveal">
+      <p class="section-label">// Credentials</p>
+      <h2 class="section-title">Certifications &amp; <span>Qualifications</span></h2>
+    </div>
+    <div class="certs-grid">
+      <div class="cert-card reveal">
+        <div class="cert-icon">🏆</div>
+        <div>
+          <div class="cert-name">MS-900: M365 Fundamentals</div>
+          <div class="cert-issuer">Microsoft</div>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon">🏆</div>
+        <div>
+          <div class="cert-name">AZ-900: Azure Fundamentals</div>
+          <div class="cert-issuer">Microsoft</div>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon">🏆</div>
+        <div>
+          <div class="cert-name">CompTIA A+</div>
+          <div class="cert-issuer">CompTIA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="reveal">
+      <p class="section-label">// Get In Touch</p>
+      <h2 class="section-title">Let's <span>Connect</span></h2>
+    </div>
+    <div class="contact-wrapper reveal">
+      <div class="contact-info">
+        <h3>Open to new conversations.</h3>
+        <p>Whether it's a new role, a collaboration, or just a tech conversation — my inbox is always open. Based in Toronto and working at Epsilon Industries.</p>
+        <a href="mailto:sugandhs93@gmail.com" class="contact-link">
+          <div class="contact-link-icon">📧</div>
+          sugandhs93@gmail.com
+        </a>
+        <a href="https://www.linkedin.com/in/sugandhsuvarnan/" target="_blank" class="contact-link">
+          <div class="contact-link-icon">💼</div>
+          https://www.linkedin.com/in/sugandhsuvarnan/
+        </a>
+        <a href="tel:+1234567890" class="contact-link">
+          <div class="contact-link-icon">📞</div>
+          +1 (226) 899-8439
+        </a>
+      </div>
+      <div class="contact-right">
+        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted); line-height: 2;">
+          <span style="color: var(--accent)">const</span> specialist = {<br/>
+          &nbsp;&nbsp;name: <span style="color: #a8ff78">"Your Name"</span>,<br/>
+          &nbsp;&nbsp;role: <span style="color: #a8ff78">"IT Specialist"</span>,<br/>
+          &nbsp;&nbsp;company: <span style="color: #a8ff78">"Epsilon Industries"</span>,<br/>
+          &nbsp;&nbsp;location: <span style="color: #a8ff78">"Ontario, CA"</span>,<br/>
+          &nbsp;&nbsp;available: <span style="color: var(--accent)">true</span>,<br/>
+          &nbsp;&nbsp;skills: [<span style="color: #a8ff78">"Azure"</span>, <span style="color: #a8ff78">"Intune"</span>, <span style="color: #a8ff78">"M365"</span>]<br/>
+          };
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+     <span>Sugandh Suvarnan</span> &nbsp;|&nbsp; Kingston, Canada
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => obs.observe(el));
+
+    // Skill bar animation on scroll
+    const skillFills = document.querySelectorAll('.skill-fill');
+    const skillObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const target = e.target;
+          const width = target.style.width;
+          target.style.width = '0';
+          setTimeout(() => { target.style.width = width; }, 200);
+          skillObs.unobserve(target);
+        }
+      });
+    }, { threshold: 0.5 });
+    skillFills.forEach(el => skillObs.observe(el));
+  </script>
+</body>
+</html>
